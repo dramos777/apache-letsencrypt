@@ -1,0 +1,36 @@
+services:
+  apache:
+    image: httpd:2.4
+    volumes:
+      - ./config/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./letsencrypt/certbot/conf:/etc/letsencrypt
+      - ./letsencrypt/certbot/www:/var/www/certbot
+      - ./certs/dhparam.pem:/etc/apache2/certs/dhparam.pem
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro/"
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.11
+    restart: always
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./letsencrypt/certbot/conf:/etc/letsencrypt
+      - ./letsencrypt/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.12
+    restart: always
+
+networks:
+  app-network:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
