@@ -5,7 +5,7 @@ services:
       - ./config/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ./letsencrypt/certbot/conf:/etc/letsencrypt
       - ./letsencrypt/certbot/www:/var/www/certbot
-      - ./certs/dhparam.pem:/etc/apache2/certs/dhparam.pem
+      - ./letsencrypt/dhparam.pem:/etc/apache2/certs/dhparam.pem
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro/"
     ports:
